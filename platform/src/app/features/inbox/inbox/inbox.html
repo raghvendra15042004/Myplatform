@@ -1,0 +1,89 @@
+<div class="inbox-page">
+
+  <!-- Header -->
+  <div class="inbox-header">
+    <h2>Inbox</h2>
+    <button class="btn-add" (click)="addRecord()">+ Add Record</button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div
+      class="kpi-card"
+      *ngFor="let card of kpiCards"
+      [style.border-top-color]="card.color"
+      (click)="onStatusFilter(card.key === 'total' ? '' : card.label)"
+    >
+      <div class="kpi-value" [style.color]="card.color">{{ getKpiValue(card.key) }}</div>
+      <div class="kpi-label">{{ card.label }}</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <input
+      type="text"
+      placeholder="Search by record ID or template..."
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="onSearch()"
+      class="search-input"
+    />
+    <select [(ngModel)]="selectedStatus" (change)="onSearch()" class="status-select">
+      <option value="">All Statuses</option>
+      <option value="New">New</option>
+      <option value="Processed">Processed</option>
+      <option value="Archived">Archived</option>
+      <option value="Misrouted">Misrouted</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper">
+    <div class="loading" *ngIf="isLoading">Loading...</div>
+
+    <table *ngIf="!isLoading">
+      <thead>
+        <tr>
+          <th>Record ID</th>
+          <th>Template</th>
+          <th>Module</th>
+          <th>Status</th>
+          <th>Created By</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of records">
+          <td>{{ record.record_id }}</td>
+          <td>{{ record.data?.template_name || '—' }}</td>
+          <td>{{ record.data?.module || '—' }}</td>
+          <td><span class="badge" [ngClass]="getStatusClass(record.status)">{{ record.status }}</span></td>
+          <td>{{ record.created_by }}</td>
+          <td>{{ record.created_at | date:'dd MMM yyyy' }}</td>
+          <td>
+            <button class="btn-view" (click)="viewRecord(record.record_id)">View</button>
+          </td>
+        </tr>
+        <tr *ngIf="records.length === 0">
+          <td colspan="7" class="empty">No records found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+    <button
+      *ngFor="let page of getPages()"
+      (click)="onPageChange(page)"
+      [class.active]="page === currentPage"
+    >{{ page }}</button>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+  </div>
+
+  <!-- Total -->
+  <div class="total-info">Showing {{ records.length }} of {{ total }} records</div>
+
+</div>

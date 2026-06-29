@@ -1,0 +1,53 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-header">
+      <div class="logo">RP</div>
+      <h1>MyPlatform</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Enter your username"
+          [class.error]="username?.invalid && username?.touched"
+        />
+        <span class="error-text" *ngIf="username?.invalid && username?.touched">
+          Username is required
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [class.error]="password?.invalid && password?.touched"
+        />
+        <span class="error-text" *ngIf="password?.invalid && password?.touched">
+          <ng-container *ngIf="password?.errors?.['required']">Password is required</ng-container>
+          <ng-container *ngIf="password?.errors?.['minlength']">Minimum 6 characters</ng-container>
+        </span>
+      </div>
+
+      <div class="error-banner" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Sign In</span>
+        <span *ngIf="isLoading">Signing in...</span>
+      </button>
+
+    </form>
+
+  </div>
+</div>
